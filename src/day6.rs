@@ -27,13 +27,13 @@ fn parse_input_day6(input: &str) -> Result<Vec<Histogram>, ParseIntError> {
 }
 
 #[aoc(day6, part1)]
-pub fn part1(passes: &[Histogram]) -> usize {
-    passes.iter().map(|group| group.answers.len()).sum()
+pub fn part1(groups: &[Histogram]) -> usize {
+    groups.iter().map(|group| group.answers.len()).sum()
 }
 
 #[aoc(day6, part2)]
-pub fn part2(passes: &[Histogram]) -> usize {
-    passes
+pub fn part2(groups: &[Histogram]) -> usize {
+    groups
         .iter()
         .map(|group| {
             group
