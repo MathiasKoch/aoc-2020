@@ -92,23 +92,6 @@ impl Execution {
         }
     }
 
-    // pub fn apply_patch(&mut self, inst: &mut Instruction) -> bool {
-    //     if self.apply_patches == 0 {
-    //         return false;
-    //     }
-
-    //     let newinst = match inst {
-    //         Instruction::Jump(v) => Instruction::Nop(*v),
-    //         Instruction::Acc(v) => Instruction::Acc(*v),
-    //         Instruction::Nop(v) => Instruction::Jump(*v)
-    //     };
-    //     println!("Patched {:?} to {:?}", inst, newinst);
-    //     *inst = newinst;
-    //     self.apply_patches -= 1;
-
-    //     true
-    // }
-
     pub fn step(&mut self, inst: &Instruction) -> bool {
         println!("Stepping instruction: {:?} - {:?}", self.next_line, inst);
 
