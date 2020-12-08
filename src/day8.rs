@@ -16,26 +16,24 @@ impl FromStr for Instruction {
         let mut iter = s.trim().splitn(2, ' ');
 
         let inst = iter.next().expect("No instruction!");
-        let cnt = iter.last().expect("No count!").parse().map_err(drop)?;
+        let arg = iter.last().expect("No argument!").parse().map_err(drop)?;
 
         match inst {
-            "nop" => Ok(Self::Nop(cnt)),
-            "jmp" => Ok(Self::Jump(cnt)),
-            "acc" => Ok(Self::Acc(cnt)),
+            "nop" => Ok(Self::Nop(arg)),
+            "jmp" => Ok(Self::Jump(arg)),
+            "acc" => Ok(Self::Acc(arg)),
             _ => Err(()),
         }
     }
 }
 
 pub struct Patcher {
-    patch_nr: usize
+    patch_nr: usize,
 }
 
 impl Patcher {
     pub fn new() -> Self {
-        Self {
-            patch_nr: 0
-        }
+        Self { patch_nr: 0 }
     }
 
     pub fn patch_program(
@@ -45,16 +43,16 @@ impl Patcher {
         let mut patched_program = program.clone();
 
         loop {
-            if let Some(i) = patched_program.get_mut(&self.patch_nr){
+            if let Some(i) = patched_program.get_mut(&self.patch_nr) {
                 self.patch_nr += 1;
                 match i {
-                    Instruction::Nop(v) => *i = Instruction::Jump(*v),
-                    Instruction::Jump(v) => *i = Instruction::Nop(*v),
+                    Instruction::Nop(arg) => *i = Instruction::Jump(*arg),
+                    Instruction::Jump(arg) => *i = Instruction::Nop(*arg),
                     _ => {
                         continue;
                     }
                 }
-                break
+                break;
             } else {
                 return None;
             }
@@ -96,19 +94,19 @@ impl Execution {
         println!("Stepping instruction: {:?} - {:?}", self.next_line, inst);
 
         let newline = match inst {
-            Instruction::Jump(cnt) => {
-                assert!(self.next_line as isize + cnt >= 0);
-                let newline: usize = (self.next_line as isize + cnt) as usize;
+            Instruction::Jump(arg) => {
+                assert!(self.next_line as isize + arg >= 0);
+                let newline: usize = (self.next_line as isize + arg) as usize;
                 if self.lines_executed.contains(&newline) {
                     return false;
                 }
                 newline
             }
-            Instruction::Acc(cnt) => {
-                self.accumulator += cnt;
+            Instruction::Acc(arg) => {
+                self.accumulator += arg;
                 self.next_line + 1
             }
-            Instruction::Nop(_) => self.next_line + 1,
+            Instruction::Nop(_arg) => self.next_line + 1,
         };
 
         self.lines_executed.insert(self.next_line);
